@@ -1,0 +1,120 @@
+#include <iostream>
+#include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+//#include "Functions.h"
+
+using namespace cv;
+using namespace std;
+
+bool isInside(const Mat &img, int i, int j) {
+    return i >= 0 && i < img.rows && j >= 0 && j < img.cols;
+}
+
+long long computeCensusTransformBitArray(const Mat_<uchar> &img, int i, int j) {
+    long long bitArray = 0;
+    int di[7] = {-3, -2, -1, 0, 1, 2, 3};
+    int dj[9] = {-4, -3, -2, -1, 0, 1, 2, 3, 4};
+
+    for (int k = 0; k < 7; k++) {
+        for (int l = 0; l < 9; l++) {
+            if (!(k == (i + di[k]) && l == (j + dj[l]))) {
+                if (isInside(img, i + di[k], j + dj[l])) {
+                    bitArray += (img(i + di[k], j + dj[l]) < img(i, j)) ? 1 : 0;
+//                    cout << (int) img(i + di[k], j + dj[l]) << " " << ((img(i + di[k], j + dj[l]) < img(i, j)) ? 1 : 0)
+//                         << " ";
+                bitArray <<= 1;
+                }
+            }
+        }
+    }
+//    cout << endl << (int) img(i, j) << " " << bitArray << endl;
+    return bitArray;
+}
+
+int countSetBits(long long n) {
+    int count = 0;
+    int nb = 63;
+    while (nb--) {
+        count += n & 1;
+        n >>= 1;
+    }
+    return count;
+}
+
+int computeHammingDistance(long long bitsValueR, long long bitsValueL) {
+    int countDifferentBits = 0;
+//    unsigned long long mask = 4611686018427387904;   //mask = [100000000000000000000000000000000000000000000000000000000000000] //63 bits
+//
+//    while (mask > 0) {
+//        if ((bitsValueL & mask) != (bitsValueR & mask))
+//            countDifferentBits++;
+//        mask = mask >> 1;
+//    }
+    countDifferentBits = countSetBits(bitsValueL ^ bitsValueR);
+//    cout << " diff "<< countDifferentBits;
+    return countDifferentBits;
+}
+
+Mat_<uchar> computeDisparityMap(Mat_<uchar> imgR, Mat_<uchar> imgL) {
+    Mat_<uchar> disparityMap(imgL.rows, imgL.cols);
+    int census_height = 7;
+    int census_width = 9;
+    int dims[] = {imgR.rows, imgR.cols, imgR.cols};
+
+    Mat_<int> C = Mat(3, dims, CV_8UC1);
+    Mat_<int> S = Mat(3, dims, CV_8UC1);
+
+    for (int i = 0; i < imgL.rows; i++) {
+        for (int j = 0; j < imgL.cols; j++) {
+            for (int d = 1; d <= 50; d++) {
+                if (i >= census_height && i <= imgL.rows - census_height && j >= census_width &&
+                    j <= imgL.cols - census_width
+                    && j - d >= census_width && j - d <= imgL.cols - census_width)
+                    C(i, j, d) = computeHammingDistance(computeCensusTransformBitArray(imgL, i, j),
+                                                        computeCensusTransformBitArray(imgR, i, j - d));
+                else C(i, j, d) = 0;
+            }
+        }
+    }
+    for (int i = census_height; i < disparityMap.rows - census_height; i++) {
+        for (int j = census_width; j < disparityMap.cols - census_width; j++) {
+            int min = INT_MAX, min_d = 0;
+            for (int d = 1; d <= 50; d++) {
+                int sum = 0;
+                for (int z = 0; z < 5; z++) {
+                    for (int w = 0; w < 5; w++) {
+                        sum += C(i + z, j + w, d);
+                    }
+                }
+                S(i, j, d) = sum;
+                if (sum < min) {
+                    min = sum;
+                    min_d = d;
+                }
+            }
+//            if (min_d > 255)
+//                min_d = 255;
+//            disparityMap(i, j) = min_d;
+            disparityMap(i, j) = round(((min_d - 1) * 255) / 49);
+        }
+    }
+    return disparityMap;
+}
+
+int main() {
+    Mat_<uchar> imgR = imread("Images/teddyimR.png", CV_LOAD_IMAGE_GRAYSCALE);
+    Mat_<uchar> imgL = imread("Images/teddyimL.png", CV_LOAD_IMAGE_GRAYSCALE);
+    Mat_<uchar> imgH(imgR.rows, imgR.cols);
+
+    imshow("Original image right", imgR);
+    imshow("Original image left", imgL);
+
+    imgH = computeDisparityMap(imgR, imgL);
+//    cout << computeHammingDistance(286720, 815516);
+    imshow("Hamming distance image result", imgH);
+
+    waitKey(0);
+
+    return 0;
+}

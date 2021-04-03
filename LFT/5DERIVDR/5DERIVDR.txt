@@ -1,0 +1,650 @@
+
+	ANALIZA DESCENDENT RECURSIVA
+
+     1. Scopul lucrarii 
+
+ 	- prezentarea modalitatilor de constructie a unui analizor sintactic 
+descendent recursiv LL(1)
+
+     2. Notiuni teoretice
+
+     Analiza sintactica presupune si integrarea actiunilor caracteristice 
+tabelei de simboluri, arborilor de derivare, generarii codului. De aceea se 
+impune o rezolvare determinista a acestei analize, un posibil backtracking 
+implicind o multitudine de actiuni de constructie respectiv distrugere ce ar 
+ingreuna si prelungi nepermis de mult aceasta etapa.
+     O posibilitate de analiza sintactica determinista este cea a analizei LL 
+care foloseste un subset al gramaticilor independente de context - gramaticile 
+LL(k) respectiv LL(k) tari. 
+     Studiul compilatoarelor a relevat faptul ca de cele mai multe ori limbajele 
+de programare pot fi derivate de o gramatica LL(1), eventualele exceptii fiind 
+rezolvate prin tratarea lor ca si cazuri speciale.
+     Constructia unui derivator descendent recursiv presupune parcurgerea 
+urmatorului algoritm:
+     1. Scrierea gramaticii aferente limbajului ce se doreste a fi recunoscut.
+     2. Eliminarea din gramatica a recursivitatii stinga si factorizarea 
+gramaticii.
+     3. Stabilirea actiunilor caracteristice fiecarei productii.
+     4. Determinarea seturilor PRIM si URMA si verificarea proprietatii de 
+gramatica LL(1).
+     5. Scrierea pe baza gramaticii a analizorului lexical care sa recunoasca 
+tipul si eventualele proprietati ale terminalelor.
+     6. Scrierea analizorului sintactic astfel:
+          6.1. Fiecarui nonterminal X ii corespunde o functie X() , simbolului 
+de start corespunzindu-i programul principal.
+          6.2. Corpul functiei X() consta dintr-o ramificare ce distinge 
+productiile ce il au pe X ca parte stinga.Fiecare nonterminal in partea dreapta 
+a unei productii este convertit intr-un apel al functiei corespunzatoare. 
+Fiecare terminal este verificat ca prezenta  dupa care este este apelat 
+analizorul lexical pentru furnizarea lexemului urmator.
+          6.3 Recunoasterea unei productii sau a unei parti de productie poate 
+fi insotita si de actiuni specifice scopului propus( construire arbore 
+sintactic, evaluari, generare cod, etc.) 
+          6.4. Daca nici unul dintre terminalele asteptate nu este prezent este 
+invocata functia pentru tratarea erorilor.
+
+     3. Desfasurarea lucrarii
+
+     1. Sa se testeze programele prezentate.
+     2. Sa se scrie o functie care construieste arborele sintactic asociat unei 
+expresii aritmetice descrise in prima varianta.
+     2. Sa se scrie o gramatica pentru expresii booleene si sa se implementeze 
+algoritmul descendent recursiv aferent.
+
+     4. Intrebari si dezvoltari
+
+     1. Sa se scrie un program care citeste o gramatica si determina multimile 
+PRIM si URMA.
+     2. Sa se scrie un program care citeste o gramatica si  construieste 
+gramatica echivalenta non-recursiva stinga si factorizata.
+     3. Sa se scrie un generator de analizoare descendent recursive.
+     4. Sa se scrie un program care determina ordinul unei gramatici LL.
+
+     5. Programe
+
+     Prezentam dezvoltarea unui desk-top computer.
+     Varianta 1 - presupune construirea unui calculator de buzunar capabil sa 
+opereze cu numere intregi si +,-,*,/ si care sa permita si regrupari prin 
+utilizarea parantezelor. Prioritatea operatorilor este cea obisnuita , la fel si 
+asociativitatea.
+     Fisierul ll1.cpp cuprinde setul productiilor gramaticii ce recunosc astfel 
+de expresii (P) , setul productiilor gramaticii echivalente nonrecursive stinga 
+precum si setul multimilor PRIM si URMA, precum si o implementare a analizorului 
+in conformitate cu algoritmul prezentat mai sus.
+         
+FISIERUL: ll1.cpp
+
+/*
+   P = { E -> E+T | E-T | T,
+   	    T -> T*F | T/F | F,
+	    F -> n | (E) }
+			                 PRIM 	    URMA
+P'= { E -> T | TC                 { n,( }   { ),# }
+	C -> +T | +TC | -T | -TC    { +,- }   { ),# }
+	T -> F | FD			    { n,( }	   { +,-,),# }
+	D -> *F | *FD | /F | /FD    { *,/ }	   { +,-,),# }
+	F -> n | (E)       	    { n,( }   { +,-,*,/,),# }
+
+      n	  +		 -	     *	      /	      (	       )
+
+E     T|TC                   		                      T|TC
+C	      +T|+TC     -T|-TC
+T     F|FD                     		                 F|FD
+D			                *F|*FD      /F|/FD
+F     n				                            (E)
+*/
+
+#include <stdio.h>
+#include <ctype.h>
+
+#define 		NUMAR		      01
+#define		PLUS		      04
+#define		MINUS		      010
+#define		STEA        	020
+#define		SLASH		      040
+#define		PARS		      0100
+#define		PARD		      0200
+#define		NL		      01000
+#define		PRIMC		      (PLUS|MINUS)
+#define		PRIMD		      (STEA|SLASH)
+
+int lexem,vlexem;
+int E(void),C(int),T(void),D(int),F(void);
+int lex(void);		// analizorul lexical
+void eroare(char *);
+
+void main(void)
+{
+  while( lex() )
+	if (lexem != NL)
+		printf("\t%d\n",E());
+}
+
+int lex(void)
+{  int c;
+   while((c=getchar()) == ' ' || c == '\t');
+   if (c == EOF)
+	return lexem = 0;
+   if ( isdigit(c)){
+	ungetc(c,stdin);scanf("%d",&vlexem);
+	return lexem=NUMAR;
+	}
+   switch(c){
+	case '+' :	lexem=PLUS; break;
+	case '-' :	lexem=MINUS; break;
+	case '*' :	lexem=STEA; break;
+	case '/' :	lexem=SLASH; break;
+	case '(' :	lexem=PARS; break;
+	case ')' :	lexem=PARD; break;
+	case '\n' :	lexem=NL;  break;
+	default :	lexem = 0;
+	}
+   return lexem;
+}
+
+E(void)
+{  int t;
+   t=T();
+   if(lexem &PRIMC)
+	return C(t);
+   return t;
+}
+
+C(int v)
+{  int opr,t,e;
+   opr=lexem;
+   lex();
+   t=T();
+   e=opr==PLUS ? v+t : v-t ;
+   if (lexem & PRIMC)
+	return C(e);
+   return e;
+}
+
+T(void)
+{  int f;
+   f=F();
+   if(lexem & PRIMD)
+	return D(f);
+   return f;
+}
+
+D(int v)
+{  int opr,f,t;
+   opr=lexem;
+   lex();
+   f=F();
+   t= opr==STEA ? v*f : v/f ;
+   if(lexem & PRIMD)
+	return D(t);
+   return t;
+}
+
+F(void)
+{  int n;
+   if(lexem == NUMAR){
+	n=vlexem;lex();
+	return n;
+	}
+   lex(); n = E(); lex();
+   return n;
+}
+
+     Varianta 2 - introduce pe linga operatiile de la varianta 1 operatorul "-" 
+unar precum si posibilitatea utilizarii unor variabile cu nume literar. Sint 
+adaugate si posibilitati de trasare a executiei programului.
+
+FISIERUL: ll1tras.cpp
+
+/*
+   P = { A -> v = A | E ,
+	   E -> E+T | E-T | T,
+	   T -> T*F | T/F | F,
+	   F -> n | v | -F | (A) }
+
+						PRIM 		     URMA
+
+  P' = { A -> v = A | E,          { n,v,-,( }	  { ),# }
+         E -> T | TC              { n,v,-,( }    { ),# }
+         C -> +T | +TC | -T | -TC { +,- } 	  { ),# }
+         T -> F | FD		    { n,v,-,( }	  { +,-,),# }
+         D -> *F | *FD | /F | /FD { *,/ }		  { +,-,),# }
+         F -> n | v | -F | (A)    { n,v,-,( }    { +,-,*,/,),#}
+
+     n	  v	    +	    -	    *	     /	  	  =	    (	     )
+A    E      v=A|E	          E				                E
+E    T|TC   T|TC	          T|TC			                T|TC
+C		        +T|+TC -T|-TC
+T    F|FD   F|FD            F|FD            		          F|FD
+D				       *F|*FD  /F|/FD
+F    n	 v	          -F			                (A)
+*/
+
+#include <stdio.h>
+#include <ctype.h>
+#include <signal.h>
+#include <setjmp.h>
+#include <conio.h>
+
+#define DEPAN
+
+#define 		NUMAR		  01
+#define		VAR		  02
+#define		PLUS		  04
+#define		MINUS		  010
+#define		STEA          020
+#define		SLASH		  040
+#define		PARS		  0100
+#define		PARD		  0200
+#define		ATRIB		  0400
+#define		NL		  01000
+#define		PRIMC		  (PLUS|MINUS)
+#define		PRIMD		  (STEA|SLASH)
+#define		PRIMF		  (NUMAR|VAR|MINUS|PARS)
+#define		URMAE		  (PARD|NL)
+#define		URMAT		  (PLUS|MINUS|PARD|NL)
+#define		URMAF		  (PLUS|MINUS|STEA|SLASH|PARD|NL)
+
+double mem[26];		// pentru memorarea valorii variabilelor literare
+union{
+	double val;
+	int index;	// index in mem[]
+	}vlexem;
+
+int lexem,lexurm = -1, linie = 1;
+char *cmd; 	// pointer comanda
+jmp_buf	start;
+
+// declaratii functii
+...
+
+
+void main(int argc,char *argv[])
+{
+  cmd=argv[0];
+  setjmp(start);     	//   setare buffer start
+  signal(SIGFPE,fpe);	//   armare semnal depasire binara
+  while( lex() )
+	if (lexem != NL)
+		printf("\t%.8g\n",A(0));
+}
+
+int lex(void)
+{  int c;
+   if(lexurm >= 0){ 	// consum lexemul memorat, nu extrag din 			
+		// fisier
+	lexem = lexurm; lexurm = -1;
+	return lexem;
+	}
+   while((c=getchar()) == ' ' || c == '\t');
+   ...
+   if(islower(c)){
+	vlexem.index=c-'a';
+	return lexem=VAR;
+	}
+   switch(c){
+	...
+   return lexem;
+}
+
+double erexec(char *s)
+{ eroare(s); longjmp(start,0); return 0.0; }
+
+void fpe(int i)
+{ eroare("eroare aritmetica"); longjmp(start,0); }
+
+void eroare(char *s)
+{ fprintf(stdout,"%s %s linia %d\n",cmd,s,linie);}
+
+#ifdef DEPAN
+
+char *ind="                                        ";
+
+char corespondent(int lexem)
+{ switch(lexem){
+	case PLUS  : return '+';
+	case MINUS : return '-';
+	case STEA  : return '*';
+	case SLASH : return '/';
+	case PARS  : return '(';
+	case PARD  : return ')';
+	case NL    : return '\n';
+	}
+}
+
+void tras(int i,char nt,double v)
+{ printf("%s%c %f /",ind+40-i,nt,v);
+  if (lexurm ==  -1)
+	printf(" -1 /");
+  else if(lexurm == NUMAR)
+	printf(" %f /",vlexem.val);
+  else if(lexurm == VAR)
+	printf(" %c /",vlexem.index+'a');
+  else printf(" %c /",corespondent(lexurm));
+  if(lexem == NUMAR)
+	printf(" %f /",vlexem.val);
+  else if(lexem == VAR)
+	printf(" %c /",vlexem.index+'a');
+  else printf(" %c /",corespondent(lexurm));
+  putchar('\n');   getch();
+}
+
+#else
+#define	 tras(i,nt,v)
+#endif
+
+double	A(int k){ ... }
+double E(int k){ ... }
+double C(int k,double v){ ... }
+double T(int k){ ... }
+double D(int k,double v){ ... }
+
+double F(int k)
+{  double n;					tras(k,'F',0);
+   test(PRIMF);
+   switch(lexem){
+	case NUMAR : n=vlexem.val; lex(); break;
+	case VAR   : n=mem[vlexem.index]; lex(); break;
+	case MINUS : lex(); n= -F(k+2); break;
+	case PARS  : lex(); n= A(k+2); test(PARD); lex(); break;
+	}
+   test(URMAF);					tras(k,'F',n);
+   return n;
+}
+
+void test(int s)
+{
+  if( !(lexem & s)){
+	eroare("eroare sintactica in expresie");
+	while( !(lexem & s))
+		lex();
+	}
+}
+
+     Varianta 3 - prezinta un calculator de buzunar evoluat inzestrat si cu 
+operatia de ridicare la putere, cu posibilitatea folosirii functiilor 
+predefinite(sin,cos, etc), a constantelor predefinite (PI, GAMMA, etc.) , 
+variabilele si functiile fiind manipulate cu ajutorul unei tabele de simboluri 
+implementate sub forma de lista.
+     
+FISIERUL: evol.h 
+// Definitie structura tabela de simboluri
+
+typedef struct _Simbol{
+	char *nume;
+	short tip;	// VAR, PREDEF, NEDEF
+	union{
+		double val;	// VAR
+		double (*ptr)(double);
+		}u;
+	struct _Simbol *urm;
+	}Simbol;
+typedef union{
+	double val;	  // un lexem poate fi sau un double
+	Simbol *sim;	  // sau un pointer in tabela de simboluri
+	}tiplexem;
+
+
+#define 		NUMAR		  01
+#define		VAR		    02
+#define		PLUS		   04
+#define		MINUS		  010
+#define		STEA    020
+#define		SLASH		  040
+#define		PARS		   0100
+#define		PARD		   0200
+#define		ATRIB		  0400
+#define		NL		      01000
+#define 		SAG		    02000
+#define		NEDEF		  04000
+#define		PREDEF	 010000
+
+extern Simbol *install(char *,int,double), *caut(char *);
+extern void *alloc(unsigned);
+extern double erexec(char *, char *);
+
+
+FISIERUL: simbol.cpp 
+// contine functiile de acces la tabela de simboluri
+#include "evol.h"
+#include <string.h>
+#include <alloc.h>
+
+static Simbol *lstsimb = NULL;
+
+
+Simbol *caut(char *s)
+{  Simbol *ps;
+   for(ps = lstsimb; ps != NULL ; ps = ps->urm)
+	if( !strcmp(ps->nume,s))
+		return ps;
+   return NULL;
+}
+
+Simbol *install(char *s, int t, double d)
+{  Simbol *ps;
+   ps = new Simbol;
+   strcpy(ps->nume =(char *)alloc(strlen(s)+1),s);
+   ps->tip = t;   ps->u.val = d;   ps->urm = lstsimb;
+   return lstsimb=ps;}
+
+void * alloc(unsigned n)
+{ void *p;
+  if (p = malloc(n))
+	return p;
+  erexec("Depasire memorie",(char *)0);
+}
+			
+FISIERUL: math.cpp 
+// contine functiile matematice uzuale
+#include "evol.h"
+#include <math.h>
+#include <errno.h>
+extern int errno;
+double testarg(double,char *);
+double Log(double x) { return testarg(log(x),"log"); }
+double Log10(double x) { return testarg(log10(x),"log10"); }
+double Exp(double x) { return testarg(exp(x), "exp"); }
+double Sqrt(double x) { return testarg(sqrt(x), "sqrt"); }
+double Pow(double x,double y) { return testarg(pow(x,y),"pow"); }
+double integer(double x) {return (double)(long)x; }
+
+double testarg(double d,char *s)
+{
+  if(errno == EDOM){
+	errno=0;
+	erexec(s,"argument eronat");
+	}
+  else if(errno == ERANGE){
+	errno=0;
+	erexec(s," depasire");
+	}
+  return d;
+}
+
+FISIERUL: init.cpp 
+//  functiile pentru initializarea tabelei de simboluri
+#include "evol.h"
+#include <math.h>
+static struct{
+	char *nume;
+	double valc;
+	}cons[] = {
+		{"PI", 3.14159265358979323846},
+		{"E" , 2.71828182845904523536},
+		{"GAMMA", 0.57721566490153286060},
+		{"DEG" , 57.2957795130823208768},
+		{"PHI" , 1.61803398874989484820},
+		{(char *)0, 0}};
+
+static struct{
+	char *nume;
+	double (*func)(double);
+	} predef[] = {
+		{"sin" , sin },		{"cos" , cos },
+		{"atan" , atan},		{"log", log},
+		{"log10", log10},		{"exp" , exp},
+		{"sqrt" , sqrt},		{"abs" , fabs},
+		{(char *)0, 0}};
+
+void init(void)
+{ int i;
+  Simbol *s;
+  for(i=0; cons[i].nume ; i++)
+	install(cons[i].nume, VAR , cons[i].valc);
+  for(i=0; predef[i].nume; i++){
+	s = install(predef[i].nume, PREDEF, 0.0);
+	s->u.ptr = predef[i].func;
+	}
+}
+
+FISIERUL: lex.cpp
+// analizorul lexical
+#include <stdio.h>
+#include <ctype.h>
+#include "evol.h"
+extern tiplexem vlexem;
+extern int lexem,lexurm, linie;
+
+int lex(void)
+{  int c;
+   ...
+   if (isalpha(c)){
+	Simbol *s;
+	char tamp[100], *p = tamp;
+	do
+		*p++ = c;
+	while( ( c = getchar()) != EOF && isalnum(c) && (!isspace(c)));
+	ungetc(c,stdin);
+	*p = '\0';
+	if ( ! (s = caut(tamp))){
+		s = install(tamp,NEDEF,0.0);
+		vlexem.sim=s;
+		return lexem= (s->tip= NEDEF ? VAR : s->tip);
+		}
+	else {
+		vlexem.sim = s;
+		return lexem = s->tip;
+		}
+	}
+     switch(c){
+		... }	
+	return lexem;
+   }
+
+FISIERUL: ll1.cpp
+// derivatorul descendent recursiv
+/*
+   P = { A -> v = A | E ,
+	   E -> E+T | E-T | T,
+	   T -> T*F | T/F | F,
+	   F -> K^F | K,
+	   K -> n | v | b(A) | -F | (A) }
+					          PRIM 		   URMA
+
+  P' = { A -> v = A | E,              { n,v,b,-,( }	  { ),# }
+         E -> T | TC                  { n,v,b,-,( }    { ),# }
+         C -> +T | +TC | -T | -TC     { +,- } 	        { ),# }
+         T -> F | FD		        { n,v,b,-,( }	  { +,-,),# }
+         D -> *F | *FD | /F | /FD     { *,/ }	        { +,-,),# }
+         F -> K | K^F                 { n,v,b,-,(}     { +,-,*,/,),# }
+         K -> n | v | b(A) | -F | (A) { n,v,b,-,( }    { +,-,*,/,^,),#}
+
+
+    n	     v	 b     +     -      *	    /	       =	     (	    )
+A   E     v=A|E    E		 E				           E
+E   T|TC  T|TC    T|TC        T|TC			                 T|TC
+C		         +T|+TC  -T|-TC
+T   F|FD   F|FD   F|FD        F|FD            		           F|FD
+D				     	      *F|*FD  /F|/FD
+F   K|K^F  K|K^F  K|K^F       K|K^F                             K|K^F
+K    n	v	 b           -F			                 (A)
+*/
+
+#include <stdio.h>
+#include <ctype.h>
+#include <signal.h>
+#include <setjmp.h>
+#include "evol.h"
+#define		PRIMC		(PLUS|MINUS)
+#define		PRIMD		(STEA|SLASH)
+#define		PRIMK		(NUMAR|VAR|PREDEF|MINUS|PARS)
+#define		URMAE		(PARD|NL)
+#define		URMAT		(PLUS|MINUS|PARD|NL)
+#define		URMAF		(PLUS|MINUS|STEA|SLASH|PARD|NL)
+#define 	      URMAK		(PLUS|MINUS|STEA|SLASH|SAG|PARD|NL)
+
+tiplexem  vlexem;
+int lexem,lexurm = -1, linie = 1;
+char *cmd; 	// pointer comanda
+jmp_buf	start;
+
+// declaratii functii
+...
+
+void main(int argc,char *argv[])
+{  cmd=argv[0];
+  init();
+  setjmp(start);     	//   setare buffer start
+  signal(SIGFPE,fpe);	//   armare semnal depasire binara
+  while( lex() )
+	if (lexem != NL)	printf("\t%.8g\n",A());
+}
+
+void avert(char *s,char *t)
+{ fprintf(stdout,"%s : %s %s\n",cmd,s,t);}
+
+double erexec(char *s,char *t)
+{ avert(s,t); longjmp(start,0); return 0.0; }
+
+void fpe(int i)
+{ erexec("eroare aritmetica",(char *)0); }
+
+void eroare(char *s)
+{ avert(s, (char *)0 ); }
+
+double	A(void)
+{  Simbol *s;
+   if( lexem == VAR){
+	s=vlexem.sim;
+	if(lex() == ATRIB){
+		lex();s->tip=VAR;
+		return s->u.val = A();
+		}
+	lexurm=lexem;  // refacere lexem
+	lexem=VAR;
+	vlexem.sim=s;
+	}
+   return E();
+}
+...
+
+double K(void)
+{  double n; Simbol *f;
+   test(PRIMK);
+   switch(lexem){
+	case NUMAR : n=vlexem.val; lex(); break;
+	case VAR   : if(vlexem.sim->tip == NEDEF)
+				erexec("var. nedef.",vlexem.sim->nume);
+		     n = vlexem.sim->u.val; lex(); break;
+	case PREDEF: f = vlexem.sim; lex(); test(PARS); lex();
+		     n = A(); test(PARD); lex();
+		     n=(*(f->u.ptr))(n); break;
+	case MINUS : lex(); n= -F(); break;
+	case PARS  : lex(); n= A(); test(PARD); lex(); break;
+	}
+   test(URMAK);   return n;}
+
+void test(int s)
+{ if( !(lexem & s)){
+	eroare("eroare sintactica in expresie");
+	while( !(lexem & s))
+		lex();
+ }     }	
+ 
+
+ 
+ 
+
+
+

@@ -1,0 +1,54 @@
+//Mat_<uchar> dilation(Mat_<uchar> src_img) {
+//    Mat_<uchar> dst_img(src_img.rows, src_img.cols);
+//    Point2i neighbors[8];
+//    //neighbourhoodPixel8() for neighbors
+//    for (int i = 0; i < dst_img.rows; i++) {
+//        for (int j = 0; j < dst_img.cols; j++) {
+//            dst_img(i, j) = 255;
+//        }
+//    }
+//
+//    for (int i = 0; i < src_img.rows; i++) {
+//        for (int j = 0; j < src_img.cols; j++) {
+//            if (src_img(i, j) == 0) {
+//                neighbourhoodPixel8(src_img, i, j, neighbors);
+//                for (auto &neighbor : neighbors) {
+//                    if (neighbor != Point2i(-1, -1))
+//                        dst_img(neighbor.x, neighbor.y) = 0;
+//                }
+//                dst_img(i, j) = 0;
+//            }
+//
+//        }
+//    }
+//    return dst_img;
+//}
+
+//Mat_<uchar> erosion(Mat_<uchar> src_img) {
+//    Mat_<uchar> dst_img(src_img.rows, src_img.cols);
+//    Point2i neighbors[8];
+//    //neighbourhoodPixel8() for neighbors
+//    for (int i = 0; i < dst_img.rows; i++) {
+//        for (int j = 0; j < dst_img.cols; j++) {
+//            dst_img(i, j) = 255;
+//        }
+//    }
+//
+//    for (int i = 0; i < src_img.rows; i++) {
+//        for (int j = 0; j < src_img.cols; j++) {
+//            if (src_img(i, j) == 0) {
+//                neighbourhoodPixel8(src_img, i, j, neighbors);
+//                int ok = 0;
+//                for (auto &neighbor : neighbors) {
+//                    if (neighbor == Point2i(-1, -1) || src_img(neighbor.x, neighbor.y) != 0)
+//                        ok = 1;
+//                }
+//                if (ok == 0 && src_img(i, j) == 0)
+//                    dst_img(i, j) = 0;
+//            }
+//
+//        }
+//    }
+//    return dst_img;
+//
+//}

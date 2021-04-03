@@ -1,0 +1,56 @@
+201.55.77.0/24
+255.255.255.0
+
+21 hosts => 2^5=32 -2 = 30 hosts/subnet => 5 bits for host
+
+new mask: 255.255.255.11100000
+= 255.255.255.224 /27
+
+3 bits for subnets and 5 bits for hosts in subnet.
+2^3 subnets created
+30 nb of hosts/subnet
+
+netword address for first subnet: 201.55.77.00000000
+broadcast address for last subnet: 201.55.77.00011111
+
+
+2.a
+Server0 
+ip: 201.55.77.2
+m: /27
+201.55.77.1
+Router0 interface fa0/1
+201.55.77.1
+Router0 interface fa0/0
+201.55.77.00100001
+Router1 interface fa0/1
+201.55.77.01000001
+Router1 interface fa0/0
+201.55.77.00100010
+PC0
+201.55.77.3
+/27
+gw: 201.55.77.1
+PC1
+201.55.77.01000011
+gw:201.55.77.01000001
+
+
+2.b
+Router0: ip route 201.55.77.01000000 255.255.255.224 201.55.77.00100010
+Router1: ip route 201.55.77.0 255.255.255.224 201.55.77.00100001
+
+
+nslookup is used for querying the DNS to obtain domain name or IP address mapping, or other DNS records
+
+
+
+vlan 2
+interface fa 0/4
+switchport mode access
+switchport access vlan 2
+
+vlan 3
+interface fa 0/3
+switchport mode access
+switchport access vlan 3

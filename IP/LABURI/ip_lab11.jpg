@@ -1,0 +1,19 @@
+1) convolution with sobel Sx, Sy - no normalization! - Ix, Iy float
+
+2) gradient magnitude (float), gradient orientation (float) using atan2
+
+3) convert orientation to quantized version
+- convert angles to [0, 2pi] - if angle < 0, angle += 2pi
+- convert to quantized version 
+quant_angle = floor(angle/(2pi)*8 + 0.5) % 8
+
+4) non-maximum suppression along direction
+- if mag(i, j) < mag(neighbor(quant_angle)) || mag(i, j) < mag(neighbor((quant_angle+4)%8)), mag(i, j) = 0
+
+5) edge extension
+- define two thresholds t1 and t2
+- weak edge if t1 <= mag(i, j) < t2
+- strong edge if t2 <= mag(i, j)
+- dfs from each strong edge if neighbor is weak edge
+
+view float img = imshow("img", abs(img)/255)

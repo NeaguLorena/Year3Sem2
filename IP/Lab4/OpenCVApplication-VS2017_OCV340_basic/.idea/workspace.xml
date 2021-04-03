@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+    <generated>
+      <config projectName="OpenCVApplication_VS2017_OCV340_basic" targetName="OpenCVApplication_VS2017_OCV340_basic" />
+    </generated>
+  </component>
+  <component name="CMakeSettings" AUTO_RELOAD="true">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="9468dd0d-e20b-46c0-9d75-efddfc967607" name="Default Changelist" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="CMakeLists.txt" />
+      </list>
+    </option>
+  </component>
+  <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
+  <component name="ProjectId" id="1Z4ls4xQeT0iTfAgluMkujKSlyE" />
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/cmake-build-debug/Images" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="settings.editor.selected.configurable" value="CMakeSettings" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/cmake-build-debug/Images" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/cmake-build-debug" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="OpenCVApplication_VS2017_OCV340_basic" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="OpenCVApplication_VS2017_OCV340_basic" TARGET_NAME="OpenCVApplication_VS2017_OCV340_basic" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="OpenCVApplication_VS2017_OCV340_basic" RUN_TARGET_NAME="OpenCVApplication_VS2017_OCV340_basic">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9468dd0d-e20b-46c0-9d75-efddfc967607" name="Default Changelist" comment="" />
+      <created>1584106450656</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1584106450656</updated>
+      <workItem from="1584106452198" duration="776000" />
+      <workItem from="1584112511112" duration="9423000" />
+      <workItem from="1584128765142" duration="122000" />
+      <workItem from="1584479006138" duration="38000" />
+      <workItem from="1584479406625" duration="17484000" />
+      <workItem from="1585063508270" duration="15322000" />
+      <workItem from="1585126129952" duration="4024000" />
+      <workItem from="1585141013422" duration="6168000" />
+      <workItem from="1585679943917" duration="31272000" />
+      <workItem from="1586199943824" duration="4626000" />
+      <workItem from="1586271752703" duration="7899000" />
+      <workItem from="1586345415959" duration="5626000" />
+      <workItem from="1586812701438" duration="5337000" />
+      <workItem from="1586870846679" duration="11379000" />
+      <workItem from="1586949129995" duration="12285000" />
+      <workItem from="1588096281598" duration="8466000" />
+      <workItem from="1588159011454" duration="6330000" />
+      <workItem from="1588712701724" duration="7224000" />
+      <workItem from="1588765211702" duration="10516000" />
+      <workItem from="1588870537691" duration="253000" />
+      <workItem from="1589057311984" duration="2063000" />
+      <workItem from="1589061507461" duration="662000" />
+      <workItem from="1589121196801" duration="1799000" />
+      <workItem from="1589208495547" duration="1322000" />
+      <workItem from="1589373993081" duration="6768000" />
+      <workItem from="1589381705558" duration="4883000" />
+      <workItem from="1589399559306" duration="98000" />
+      <workItem from="1589881209645" duration="55000" />
+      <workItem from="1590434393767" duration="526000" />
+      <workItem from="1590511201396" duration="184000" />
+      <workItem from="1590663590533" duration="15839000" />
+      <workItem from="1590864387667" duration="898000" />
+      <workItem from="1593203655395" duration="2174000" />
+      <workItem from="1593249126402" duration="3175000" />
+      <workItem from="1601443186662" duration="2422000" />
+      <workItem from="1601469411604" duration="328000" />
+      <workItem from="1601470349147" duration="1302000" />
+      <workItem from="1601476824953" duration="2244000" />
+      <workItem from="1602078417508" duration="1628000" />
+      <workItem from="1602621993928" duration="2505000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="CMakeRunConfiguration">
+        <watch expression="label" />
+      </configuration>
+    </watches-manager>
+  </component>
+</project>

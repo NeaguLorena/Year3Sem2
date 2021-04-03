@@ -1,0 +1,45 @@
+Tunnel, relay between TCP connections; no extra info check; example: 
+
+HTTP tunneling is used to create a network link between two computers in conditions of restricted network connectivity including firewalls, NATs and ACLs, among other restrictions. The tunnel is created by an intermediary called a proxy server which is usually located in a DMZ.
+
+Tunnel HTTP intermediary system is used to create a relay between TCP connections in conditions of restricted network connectivity. For example, a firewall in which a client & a server maintains a secure connection for the purposes of the HTTP transaction
+
+
+TCP is a layer 4 protocol which provides acknowledgement of the received packets and is also reliable as it resends the lost packets. It is better than UDP but due to these features it has an additional overhead. It is used by application protocols like HTTP and FTP.
+
+
+
+
+
+prevent datagrams from persisting (e.g. going in circles) on an internet
+
+
+
+
+
+Symmetrical Connection
+No internet bottleneck
+
+
+
+
+
+
+Asymetrical refers to a system in which the data speed or quantity differs in one direction as compared with the other direction, averaged over time, opposed to symetrical where they are the same.
+ Asymmetrical data flow can make a more efficient use of the available infrastructure than symmetrical data flow, in which the speed or quantity of data is the same in both directions, averaged over time. So the response and request have different bandwidth, different speed. So if the they have diffent bandwidth or speed they are asymmetric. If symmetric, then they have the same bandwidth, speed. Also if the downstream and upstream data differ then there is an asymetrical communication, and if they're the same then it is symetrical.
+
+
+
+
+
+
+
+
+Asymmetrical data flow can, in some instances, make more efficient use of the available infrastructure than symmetrical data flow, in which the speed or quantity of data is the same in both directions, averaged over time.
+
+
+
+
+
+
+
