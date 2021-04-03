@@ -1,0 +1,7 @@
+CN filter=lfs diff=lfs merge=lfs -text
+IP filter=lfs diff=lfs merge=lfs -text
+IS filter=lfs diff=lfs merge=lfs -text
+LFT filter=lfs diff=lfs merge=lfs -text
+LP filter=lfs diff=lfs merge=lfs -text
+SD filter=lfs diff=lfs merge=lfs -text
+project_is filter=lfs diff=lfs merge=lfs -text
